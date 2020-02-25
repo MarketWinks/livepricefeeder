@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.marketwinks.livepricefeeder.model.uk_lse_5mins_livemarketmacd;
 import com.marketwinks.livepricefeeder.model.uk_lse_5mins_livemarketprice;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdRepository;
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketPriceRepository;
 
 @RestController
@@ -26,6 +28,9 @@ public class UK_LSE_5Mins_LiveMarketPriceService {
 
 	@Autowired
 	private UK_LSE_5Mins_LiveMarketPriceRepository UK_LSE_5Mins_LiveMarketPriceRepository;
+
+	@Autowired
+	private UK_LSE_5Mins_LiveMarketMacdRepository UK_LSE_5Mins_LiveMarketMacdRepository;
 
 	@org.springframework.scheduling.annotation.Async
 	@RequestMapping(value = "/5Mins/{symbol}", method = RequestMethod.GET)
@@ -101,6 +106,21 @@ public class UK_LSE_5Mins_LiveMarketPriceService {
 		uk_lse_5mins_livemarketprice.setTime(time);
 
 		uk_lse_5mins_livemarketprice result = UK_LSE_5Mins_LiveMarketPriceRepository.save(uk_lse_5mins_livemarketprice);
+
+		uk_lse_5mins_livemarketmacd uk_lse_5mins_livemarketmacd = new uk_lse_5mins_livemarketmacd();
+		uk_lse_5mins_livemarketmacd.setPrice(price);
+		uk_lse_5mins_livemarketmacd.setSymbol(symbol);
+		uk_lse_5mins_livemarketmacd.setTime(time);
+
+		uk_lse_5mins_livemarketmacd.setEma12("calculating");
+
+		uk_lse_5mins_livemarketmacd.setEma26("calculating");
+		uk_lse_5mins_livemarketmacd.setSignal("calculating");
+		uk_lse_5mins_livemarketmacd.setMacd("calculating");
+		uk_lse_5mins_livemarketmacd.setHistogram("calculating");
+
+		uk_lse_5mins_livemarketmacd resultOfMarketFeedMACD = UK_LSE_5Mins_LiveMarketMacdRepository
+				.save(uk_lse_5mins_livemarketmacd);
 
 		execution_result = true;
 		return execution_result;
