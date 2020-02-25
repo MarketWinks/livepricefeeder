@@ -38,7 +38,7 @@ public class UK_LSE_5Mins_LiveMarketPriceService {
 
 		boolean execution_result = false;
 
-		String feedURLFull = "https://uk.finance.yahoo.com/quote/" + symbol + ".L";
+		String feedURLFull = "https://uk.finance.yahoo.com/quote/" + symbol + ".NS";
 
 		HttpGet request = null;
 		String url = feedURLFull;
