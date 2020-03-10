@@ -35,7 +35,7 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 	private UK_LSE_5Mins_LiveMarketMacdjsonRepository UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 
 	@org.springframework.scheduling.annotation.Async
-	@RequestMapping(value = "/calc/{symbol}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{symbol}/calc", method = RequestMethod.GET)
 	public boolean UK_LSE_5Mins_LiveMarketMacdParser(@PathVariable String symbol) {
 
 		boolean execution_result = false;
