@@ -207,29 +207,41 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			uk_lse_5mins_macdjson.setMacdjsonref("uk_lse_5mins_macdjson_" + symbol);
 			uk_lse_5mins_macdjson.setMacdjson(macdDataforSaving);
 
-			try (MongoClient mongoClient = MongoClients.create(
-					"mongodb+srv://checkoutfood:checkoutfood123@cluster0-5ffrd.mongodb.net/test?retryWrites=true")) {
-				MongoDatabase TestDB = mongoClient.getDatabase("test");
-				MongoCollection<org.bson.Document> uk_lse_5mins_livemarketmacdjsonCollection = TestDB
-						.getCollection("uk_lse_5mins_livemarketmacdjson");
+			// try (MongoClient mongoClient = MongoClients.create(
+			// "mongodb+srv://checkoutfood:checkoutfood123@cluster0-5ffrd.mongodb.net/test?retryWrites=true"))
+			// {
+			//
 
-				// find one document with new Document
-				org.bson.Document doc = uk_lse_5mins_livemarketmacdjsonCollection
-						.find(new org.bson.Document("macdjsonref", "uk_lse_5mins_macdjson_" + symbol)).first();
+			MongoClient mongoClient = MongoClients.create(
+					"mongodb+srv://checkoutfood:checkoutfood123@cluster0-5ffrd.mongodb.net/test?retryWrites=true");
+			MongoDatabase TestDB = mongoClient.getDatabase("test");
+			MongoCollection<org.bson.Document> uk_lse_5mins_livemarketmacdjsonCollection = TestDB
+					.getCollection("uk_lse_5mins_livemarketmacdjson");
 
-				String docext = doc.toJson().toString();
+			// find one document with new Document
+			org.bson.Document doc = uk_lse_5mins_livemarketmacdjsonCollection
+					.find(new org.bson.Document("macdjsonref", "uk_lse_5mins_macdjson_" + symbol)).first();
 
-				String idofdocext = StringUtils.substringBetween(docext, "\"_id\": {\"$oid\": \"",
-						"\"}, \"macdjsonref\"");
+			String docext = doc.toJson().toString();
 
-				System.out.println(idofdocext);
-				if (!idofdocext.equals(null)) {
-					UK_LSE_5Mins_LiveMarketMacdjsonRepository.deleteById(idofdocext);
-				}
-				mongoClient.close();
+			String idofdocext = null;
+
+			idofdocext = StringUtils.substringBetween(docext, "\"_id\": {\"$oid\": \"", "\"}, \"macdjsonref\"");
+
+			if (checkfornull(idofdocext)) {
+				idofdocext = StringUtils.substringBetween(docext, "\"_id\": \"", "\", \"macdjsonref\"");
 			}
 
-			uk_lse_5mins_livemarketmacdjson jsonsavereult = UK_LSE_5Mins_LiveMarketMacdjsonRepository
+			System.out.println(idofdocext);
+			// if (!idofdocext.toString().equals(null)) {
+			UK_LSE_5Mins_LiveMarketMacdjsonRepository.deleteById(idofdocext);
+			// } else {
+			// System.out.println("There is no macdjson entry previously for:" + symbol);
+			// }
+			mongoClient.close();
+			// }
+
+			uk_lse_5mins_livemarketmacdjson jsonsaveresult = UK_LSE_5Mins_LiveMarketMacdjsonRepository
 					.save(uk_lse_5mins_macdjson);
 			// uk_lse_5mins_macdjson_<symbol> --> macdDataforSaving
 
@@ -241,6 +253,23 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 
 		return execution_result;
 
+	}
+
+	private boolean checkfornull(String idofdocext) {
+		boolean result = true;
+
+		try {
+			if (!idofdocext.isEmpty()) {
+				result = false;
+			}
+			if (!idofdocext.equals(null)) {
+				result = false;
+			}
+
+		} catch (Exception e) {
+			result = true;
+		}
+		return result;
 	}
 
 	// @RequestMapping(value =
