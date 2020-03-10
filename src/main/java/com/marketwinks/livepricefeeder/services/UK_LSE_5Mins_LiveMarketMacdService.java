@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.marketwinks.livepricefeeder.model.uk_lse_5mins_livemarketmacd;
-import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdRepository;;
+import com.marketwinks.livepricefeeder.model.uk_lse_5mins_livemarketmacdjson;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdjsonRepository;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 @RestController
 @RequestMapping("/uk_lse_5mins_livemarketmacd")
@@ -21,6 +30,9 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 
 	@Autowired
 	private UK_LSE_5Mins_LiveMarketMacdRepository UK_LSE_5Mins_LiveMarketMacdRepository;
+
+	@Autowired
+	private UK_LSE_5Mins_LiveMarketMacdjsonRepository UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 
 	@org.springframework.scheduling.annotation.Async
 	@RequestMapping(value = "/calc/{symbol}", method = RequestMethod.GET)
@@ -151,6 +163,76 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 
 			}
 
+			List<uk_lse_5mins_livemarketmacd> MarketFeedsForMacdJson = MarketFeeds_full.stream()
+					.filter(a -> a.getSymbol().equals(symbol)).collect(Collectors.toList());
+
+			Collections.sort(MarketFeedsForMacdJson, new SortbyLatestTime());
+
+			List<JSONObject> macdDataforSaving = new ArrayList<>();
+
+			// limiting it to 400 records in the output json
+
+			int iteratorSize = 400;
+
+			if (MarketFeedsSizeForSymbol < 400) {
+				iteratorSize = MarketFeedsSizeForSymbol;
+			}
+
+			for (int index = MarketFeedsSizeForSymbol - 1; index > MarketFeedsSizeForSymbol - iteratorSize; index--) {
+
+				// LOGIC
+				JSONObject obj_inner = new JSONObject();
+				obj_inner.put("MACD_Hist", MarketFeedsForMacdJson.get(index).getHistogram().toString());
+				obj_inner.put("MACD", MarketFeedsForMacdJson.get(index).getMacd().toString());
+				obj_inner.put("MACD_Signal", MarketFeedsForMacdJson.get(index).getSignal().toString());
+				obj_inner.put("Price", MarketFeedsForMacdJson.get(index).getPrice().toString());
+				// System.out.println(obj_inner);
+
+				JSONObject obj_outer = new JSONObject();
+				// obj_outer.put(MarketFeedsForMacdJson.get(index).getTime().toString(),
+				// obj_inner);
+
+				String timeString = java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
+						.format(MarketFeedsForMacdJson.get(index).getTime()).toString();
+
+				timeString = timeString.substring(0, timeString.length() - 4);
+
+				obj_outer.put(timeString, obj_inner);
+
+				macdDataforSaving.add(obj_outer);
+
+			}
+
+			uk_lse_5mins_livemarketmacdjson uk_lse_5mins_macdjson = new uk_lse_5mins_livemarketmacdjson();
+			uk_lse_5mins_macdjson.setMacdjsonref("uk_lse_5mins_macdjson_" + symbol);
+			uk_lse_5mins_macdjson.setMacdjson(macdDataforSaving);
+
+			try (MongoClient mongoClient = MongoClients.create(
+					"mongodb+srv://checkoutfood:checkoutfood123@cluster0-5ffrd.mongodb.net/test?retryWrites=true")) {
+				MongoDatabase TestDB = mongoClient.getDatabase("test");
+				MongoCollection<org.bson.Document> uk_lse_5mins_livemarketmacdjsonCollection = TestDB
+						.getCollection("uk_lse_5mins_livemarketmacdjson");
+
+				// find one document with new Document
+				org.bson.Document doc = uk_lse_5mins_livemarketmacdjsonCollection
+						.find(new org.bson.Document("macdjsonref", "uk_lse_5mins_macdjson_" + symbol)).first();
+
+				String docext = doc.toJson().toString();
+
+				String idofdocext = StringUtils.substringBetween(docext, "\"_id\": {\"$oid\": \"",
+						"\"}, \"macdjsonref\"");
+
+				System.out.println(idofdocext);
+				if (!idofdocext.equals(null)) {
+					UK_LSE_5Mins_LiveMarketMacdjsonRepository.deleteById(idofdocext);
+				}
+				mongoClient.close();
+			}
+
+			uk_lse_5mins_livemarketmacdjson jsonsavereult = UK_LSE_5Mins_LiveMarketMacdjsonRepository
+					.save(uk_lse_5mins_macdjson);
+			// uk_lse_5mins_macdjson_<symbol> --> macdDataforSaving
+
 			execution_result = true;
 		} catch (Exception e) {
 
@@ -230,16 +312,14 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			}
 
 		}
-		
+
 		MarketFeeds_full.clear();
 
 		return execution_result;
 
 	}
-	
-	//HAVE TO WRITE A BLOCK TO RESET TO CALCULATING...
-	
-	
+
+	// HAVE TO WRITE A BLOCK TO RESET TO CALCULATING...
 
 	// @RequestMapping(value = "/detectRecordByObjectId/{objectId}", method =
 	// RequestMethod.GET)

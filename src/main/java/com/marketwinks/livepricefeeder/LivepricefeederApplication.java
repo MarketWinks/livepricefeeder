@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketPriceRepository;
 
 @SpringBootApplication
@@ -29,5 +30,8 @@ public class LivepricefeederApplication {
 
 	@Autowired
 	UK_LSE_5Mins_LiveMarketMacdRepository UK_LSE_5Mins_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_5Mins_LiveMarketMacdjsonRepository UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 
 }
