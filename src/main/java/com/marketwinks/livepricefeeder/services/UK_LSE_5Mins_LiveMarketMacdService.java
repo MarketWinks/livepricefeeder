@@ -219,8 +219,7 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			MongoCollection<org.bson.Document> uk_lse_5mins_livemarketmacdjsonCollection = TestDB
 					.getCollection("uk_lse_5mins_livemarketmacdjson");
 
-			mongoClient.close();
-
+			
 			// find one document with new Document
 			org.bson.Document doc = uk_lse_5mins_livemarketmacdjsonCollection
 					.find(new org.bson.Document("macdjsonref", "uk_lse_5mins_macdjson_" + symbol)).first();
@@ -241,13 +240,13 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			// } else {
 			// System.out.println("There is no macdjson entry previously for:" + symbol);
 			// }
-			// mongoClient.close();
+			
 			// }
 
 			uk_lse_5mins_livemarketmacdjson jsonsaveresult = UK_LSE_5Mins_LiveMarketMacdjsonRepository
 					.save(uk_lse_5mins_macdjson);
 			// uk_lse_5mins_macdjson_<symbol> --> macdDataforSaving
-
+			 mongoClient.close();
 			execution_result = true;
 		} catch (Exception e) {
 
