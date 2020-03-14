@@ -34,6 +34,7 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 	@Autowired
 	private UK_LSE_5Mins_LiveMarketMacdjsonRepository UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 
+	// https://stackoverflow.com/questions/16332092/spring-mvc-pathvariable-with-dot-is-getting-truncated
 	@org.springframework.scheduling.annotation.Async
 	@RequestMapping(value = "/{symbol}/calc", method = RequestMethod.GET)
 	public boolean UK_LSE_5Mins_LiveMarketMacdParser(@PathVariable String symbol) {
@@ -218,6 +219,8 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			MongoCollection<org.bson.Document> uk_lse_5mins_livemarketmacdjsonCollection = TestDB
 					.getCollection("uk_lse_5mins_livemarketmacdjson");
 
+			mongoClient.close();
+
 			// find one document with new Document
 			org.bson.Document doc = uk_lse_5mins_livemarketmacdjsonCollection
 					.find(new org.bson.Document("macdjsonref", "uk_lse_5mins_macdjson_" + symbol)).first();
@@ -238,7 +241,7 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			// } else {
 			// System.out.println("There is no macdjson entry previously for:" + symbol);
 			// }
-			mongoClient.close();
+			// mongoClient.close();
 			// }
 
 			uk_lse_5mins_livemarketmacdjson jsonsaveresult = UK_LSE_5Mins_LiveMarketMacdjsonRepository
