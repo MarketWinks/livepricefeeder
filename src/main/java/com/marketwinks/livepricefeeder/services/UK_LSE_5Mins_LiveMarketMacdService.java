@@ -254,6 +254,7 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 			 MarketFeeds = null;
 			 MarketFeedsForMacdJson.clear();
 			 MarketFeedsForMacdJson = null;
+			 System.gc();
 
 			execution_result = true;
 		} catch (Exception e) {
