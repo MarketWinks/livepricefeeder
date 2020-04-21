@@ -247,6 +247,14 @@ public class UK_LSE_5Mins_LiveMarketMacdService {
 					.save(uk_lse_5mins_macdjson);
 			// uk_lse_5mins_macdjson_<symbol> --> macdDataforSaving
 			 mongoClient.close();
+			 
+			 MarketFeeds_full.clear();
+			 MarketFeeds_full = null;
+			 MarketFeeds.clear();
+			 MarketFeeds = null;
+			 MarketFeedsForMacdJson.clear();
+			 MarketFeedsForMacdJson = null;
+
 			execution_result = true;
 		} catch (Exception e) {
 
