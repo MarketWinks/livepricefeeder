@@ -9,9 +9,21 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.marketwinks.livepricefeeder.repository.UK_LSE_15Mins_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_15Mins_LiveMarketPriceRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_30Mins_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_30Mins_LiveMarketPriceRepository;
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdRepository;
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketMacdjsonRepository;
 import com.marketwinks.livepricefeeder.repository.UK_LSE_5Mins_LiveMarketPriceRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Daily_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Daily_LiveMarketPriceRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Hourly_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Hourly_LiveMarketPriceRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Monthly_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Monthly_LiveMarketPriceRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Weekly_LiveMarketMacdRepository;
+import com.marketwinks.livepricefeeder.repository.UK_LSE_Weekly_LiveMarketPriceRepository;
 
 @SpringBootApplication
 @EnableAutoConfiguration
@@ -33,5 +45,41 @@ public class LivepricefeederApplication {
 
 	@Autowired
 	UK_LSE_5Mins_LiveMarketMacdjsonRepository UK_LSE_5Mins_LiveMarketMacdjsonRepository;
+
+	@Autowired
+	UK_LSE_15Mins_LiveMarketPriceRepository UK_LSE_15Mins_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_30Mins_LiveMarketPriceRepository UK_LSE_30Mins_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_Hourly_LiveMarketPriceRepository UK_LSE_Hourly_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_Daily_LiveMarketPriceRepository UK_LSE_Daily_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_Weekly_LiveMarketPriceRepository UK_LSE_Weekly_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_Monthly_LiveMarketPriceRepository UK_LSE_Monthly_LiveMarketPriceRepository;
+
+	@Autowired
+	UK_LSE_15Mins_LiveMarketMacdRepository UK_LSE_15Mins_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_30Mins_LiveMarketMacdRepository UK_LSE_30Mins_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_Hourly_LiveMarketMacdRepository UK_LSE_Hourly_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_Daily_LiveMarketMacdRepository UK_LSE_Daily_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_Weekly_LiveMarketMacdRepository UK_LSE_Weekly_LiveMarketMacdRepository;
+
+	@Autowired
+	UK_LSE_Monthly_LiveMarketMacdRepository UK_LSE_Monthly_LiveMarketMacdRepository;
 
 }
